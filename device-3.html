@@ -195,11 +195,12 @@
       cursor: not-allowed;
     }
 
-    .home {
+.home {
   position: absolute;
-  inset: calc(var(--status-h) + var(--editbar-h) + var(--gap-size) * 2) var(--safe-right) calc(var(--dock-h) + var(--safe-bottom) + var(--gap-size) * 2.5) var(--safe-left); /* Increased bottom margin */
+  inset: calc(var(--status-h) + var(--editbar-h) + var(--gap-size) * 2) var(--safe-right) calc(var(--dock-h) + var(--safe-bottom) + var(--gap-size) * 3) var(--safe-left); /* Increased bottom margin */
   overflow: hidden;
-  z-index: 1;}
+  z-index: 1;
+}
       
     .search-container {
       display: flex;
@@ -379,16 +380,16 @@
       50% { opacity: 0.8; }
     }
 
-   .dock {
+.dock {
   position: absolute;
   left: var(--safe-left);
   right: var(--safe-right);
   bottom: 0;
-  height: calc(var(--dock-h) + var(--safe-bottom)); /* Include safe area inset */
+  height: calc(var(--dock-h) + var(--safe-bottom));
   display: flex;
-  align-items: flex-start; /* Align buttons at the top of the dock */
+  align-items: flex-start; /* Align buttons at the top */
   justify-content: space-around;
-  padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 24px); /* Reduced vertical padding */
+  padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 24px); /* Maintained vertical padding */
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.85), var(--accent-glow));
   backdrop-filter: blur(25px);
   border-top: 1px solid var(--accent-glow);
@@ -397,7 +398,6 @@
   box-sizing: border-box;
   overflow: visible;
 }
-
 
  .dock .d {
   width: clamp(60px, 15vw, 72px);
@@ -415,8 +415,8 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   touch-action: manipulation;
   position: relative;
-  margin-bottom: clamp(8px, 2vw, 12px); /* Shift buttons upward */
-}
+  margin-top: clamp(12px, 3vw, 16px); /* Increased to bump buttons up */
+  margin-bottom: clamp(4px, 1vw, 8px); /* Reduced to balance spacing */
 
 .dock .d:hover, .dock .d:active, .dock .d:focus {
   transform: translateY(-3px) scale(1.05);
