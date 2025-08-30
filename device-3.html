@@ -1,0 +1,2118 @@
+<div class="bg-particles" id="particles"></div>
+  
+  <div class="phone" id="phone">
+    <div class="status">
+      <div class="time" id="time">11:04 PM</div>
+      <div class="mesh" id="mesh">⬡3</div>
+    </div>
+
+    <div class="toolbar" id="toolbar">
+      <div>✨ Edit Mode Active</div>
+      <div>
+        <button class="btn" id="sortAZ">A→Z Sort</button>
+        <button class="btn" id="done">Complete</button>
+      </div>
+    </div>
+
+    <main class="home" id="home">
+      <div class="search-container">
+        <input type="text" id="appSearch" placeholder="Search AppDrops..." aria-label="Search AppDrops">
+        <select id="categoryFilter" aria-label="Filter by category">
+          <option value="all">All Categories</option>
+        </select>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="scroll-indicator" id="scrollIndicator">↓ Scroll to see more AppDrops ↓</div>
+    </main>
+
+    <section class="app-switcher" id="appSwitcher">
+      <div class="app-switcher-head">
+        <div class="app-switcher-title">Open Apps</div>
+        <div class="app-actions">
+          <button class="btn" id="closeSwitcher">Close</button>
+        </div>
+      </div>
+      <div class="app-switcher-body" id="appSwitcherBody">
+        <div class="app-switcher-empty">No apps open. Launch an AppDrop to start.</div>
+      </div>
+    </section>
+
+    <section class="settings-panel" id="settingsPanel">
+      <div class="p-head" onmousedown="startDragPanel(event, this.parentElement)" ontouchstart="startDragPanel(event, this.parentElement)">
+        <div class="app-title">Settings</div>
+        <div class="app-actions">
+          <button class="btn minimize">–</button>
+          <button class="btn close">✕</button>
+        </div>
+      </div>
+      <div class="settings-body">
+        <h2>Theme Color</h2>
+        <div class="color-grid" id="colorGrid">
+          <div class="color-swatch" style="background: #00ff7f" data-color="#00ff7f"></div>
+          <div class="color-swatch" style="background: #007bff" data-color="#007bff"></div>
+          <div class="color-swatch" style="background: #ff073a" data-color="#ff073a"></div>
+          <div class="color-swatch" style="background: #6f42c1" data-color="#6f42c1"></div>
+          <div class="color-swatch" style="background: #fd7e14" data-color="#fd7e14"></div>
+          <div class="color-swatch" style="background: #ffc107" data-color="#ffc107"></div>
+          <div class="color-swatch" style="background: #ff85a2" data-color="#ff85a2"></div>
+          <div class="color-swatch" style="background: #20c997" data-color="#20c997"></div>
+        </div>
+        <div class="color-picker-container">
+          <label for="colorPicker">Custom Color</label>
+          <input type="color" id="colorPicker" value="#00ff7f">
+        </div>
+        <button class="reset-button" id="resetColor">Reset to Default</button>
+        <h2>AppDrop Sync</h2>
+        <div class="sync-container">
+          <button class="btn" id="syncAppDrops" disabled>Sync AppDrops</button>
+          <button class="btn" id="cleanAppDrops" disabled>Remove Outdated AppDrops</button>
+          <div class="auto-sync-container">
+            <label for="autoSyncToggle">Auto-Sync on Reconnect</label>
+            <input type="checkbox" id="autoSyncToggle" aria-label="Enable auto-sync on reconnect">
+          </div>
+          <div class="sync-status" id="syncStatus">Checking network...</div>
+          <div class="sync-log" id="syncLog"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="dock">
+      <div class="d" title="Home" id="homeBtn">🏠</div>
+      <div class="d" title="Communications" id="phoneBtn">📞</div>
+      <div class="d" title="App Switcher" id="appSwitcherBtn">📱</div>
+      <div class="d" title="Settings" id="settingsBtn">⚙️<span class="badge" id="syncBadge" style="display: none;">0</span></div>
+    </footer>
+  </div>
+
+  <script>
+    let APPDROPS = [
+      { id: 'atlas', name: 'Atlas', emoji: '🌍', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/atlas/index.html', description: 'Global mapping tool', version: '1.0.0', category: 'Tools' },
+      { id: 'aurora', name: 'Aurora', emoji: '🌌', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/aurora/index.html', description: 'Visual effects suite', version: '1.2.1', category: 'Media' },
+      { id: 'bryce', name: 'Bryce Holograms', emoji: '😇', path: 'https://charlesmack.github.io/bryce/index.html', description: 'Holographic projections', version: '2.0.0', category: 'Media' },
+      { id: 'cameras', name: 'Camera Shop', emoji: '🎥🏪', path: 'https://charlesmack.github.io/camera-shop/index.html', description: 'Camera equipment marketplace', version: '1.1.0', category: 'Tools' },
+      { id: 'charles5-m', name: 'Charles5 M', emoji: '🎬', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/charles5-m/index.html', description: 'Media production tool', version: '1.0.0', category: 'Media' },
+      { id: 'charles5-p', name: 'Charles5 P', emoji: '📽️', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/charles5-p/index.html', description: 'Production planning', version: '1.0.0', category: 'Productivity' },
+      { id: 'charles5-s', name: 'Charles5 S', emoji: '🎥', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/charles5-s/index.html', description: 'Scripting assistant', version: '1.0.0', category: 'Productivity' },
+      { id: 'charles5-sf', name: 'Charles5 SF', emoji: '🎞️', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/charles5-sf/index.html', description: 'Special effects editor', version: '1.0.0', category: 'Media' },
+      { id: 'charles5-w', name: 'Charles5 W', emoji: '📺', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/charles5-w/index.html', description: 'Workflow manager', version: '1.0.0', category: 'Productivity' },
+      { id: 'dev-editor', name: 'Dev Editor', emoji: '💻', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/dev-editor/index.html', description: 'Code editing environment', version: '1.0.0', category: 'Development' },
+      { id: 'dj-drop', name: 'DJ Drop', emoji: '🎧', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/dj-drop/index.html', description: 'Music mixing tool', version: '1.0.0', category: 'Media' },
+      { id: 'encyclopedia', name: 'Encyclopedia', emoji: '📚', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/encyclopedia/index.html', description: 'Knowledge base', version: '1.0.0', category: 'Reference' },
+      { id: 'first-aid-quickref', name: 'First Aid QuickRef', emoji: '🩺', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/first-aid-quickref/index.html', description: 'Quick first aid guide', version: '1.0.0', category: 'Health' },
+      { id: 'firstaid', name: 'First Aid', emoji: '🚑', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/firstaid/index.html', description: 'Comprehensive first aid', version: '1.0.0', category: 'Health' },
+      { id: 'fiveseconds-cine', name: 'FiveSeconds Cine', emoji: '🎬', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/fiveseconds-cine/index.html', description: 'Cinematic video editor', version: '1.0.0', category: 'Media' },
+      { id: 'fiveseconds-lite', name: 'FiveSeconds Lite', emoji: '🎥', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/fiveseconds-lite/index.html', description: 'Light video editor', version: '1.0.0', category: 'Media' },
+      { id: 'hearsay-cinema', name: 'Hearsay Cinema', emoji: '🎭', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/hearsay-cinema/index.html', description: 'Theater streaming', version: '1.0.0', category: 'Media' },
+      { id: 'hearsay', name: 'Hearsay', emoji: '🗣️', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/hearsay/index.html', description: 'Voice communication', version: '1.0.0', category: 'Communication' },
+      { id: 'magifico-room', name: 'Magifico Room', emoji: '🏠', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/magifico-room/index.html', description: 'Virtual room designer', version: '1.0.0', category: 'Tools' },
+      { id: 'magifico-stage', name: 'Magifico Stage', emoji: '🎤', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/magifico-stage/index.html', description: 'Stage performance tool', version: '1.0.0', category: 'Media' },
+      { id: 'mpc-drop', name: 'MPC Drop', emoji: '🎮', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/mpc-drop/index.html', description: 'Music production controller', version: '1.0.0', category: 'Media' },
+      { id: 'Mini OS', name: 'OnePagerMiniOS', emoji: '💻', path: 'https://charlesmack.github.io/OnePagerMiniOS/index.html', description: 'Mini OS interface', version: '1.0.0', category: 'System' },
+      { id: 'planner-gemini', name: 'Planner Gemini', emoji: '📅', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/planner-gemini/index.html', description: 'Advanced planner', version: '1.0.0', category: 'Productivity' },
+      { id: 'planner-lite', name: 'Planner Lite', emoji: '🗓️', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/planner-lite/index.html', description: 'Simple planner', version: '1.0.0', category: 'Productivity' },
+      { id: 'pops', name: 'POPS', emoji: '🌟', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/pops/index.html', description: 'Production hub', version: '1.0.0', category: 'System' },
+      { id: 'retreat', name: 'Retreat', emoji: '🏕️', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/retreat/index.html', description: 'Event planning tool', version: '1.0.0', category: 'Productivity' },
+      { id: 'scratchpad', name: 'Scratchpad', emoji: '📝', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/scratchpad/index.html', description: 'Quick note-taking', version: '1.0.0', category: 'Productivity' },
+      { id: 'strobe-hud', name: 'Strobe HUD', emoji: '💡', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/strobe-hud/index.html', description: 'Lighting control HUD', version: '1.0.0', category: 'Tools' },
+      { id: 'strobe', name: 'Strobe', emoji: '✨', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/strobe/index.html', description: 'Strobe light controller', version: '1.0.0', category: 'Tools' },
+      { id: 'survivors-compass', name: 'Survivors Compass', emoji: '🧭', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/survivors-compass/index.html', description: 'Navigation aid', version: '1.0.0', category: 'Tools' },
+      { id: 'tap-talk', name: 'Tap Talk', emoji: '💬', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/tap-talk/index.html', description: 'Instant messaging', version: '1.0.0', category: 'Communication' },
+      { id: 'media-world', name: 'Media World', emoji: '🗺🕹', path: 'https://charlesmack.github.io/3d-media-player-world/index.html', description: '3D media player', version: '1.0.0', category: 'Media' },
+      { id: 'viewria', name: 'Viewria', emoji: '👀', path: 'https://charlesmack.github.io/OnePagerMiniOS/appdrops/viewria/index.html', description: 'Visual explorer', version: '1.0.0', category: 'Tools' }
+    ];
+
+    // Initialize state
+    let apps = [...APPDROPS];
+    let openApps = [];
+    let isEditMode = false;
+    let draggedTile = null;
+    let placeholder = null;
+    let touchOffsetX = 0;
+    let touchOffsetY = 0;
+    let highestZ = 10;
+    let isOnline = navigator.onLine;
+    let autoSyncEnabled = localStorage.getItem('autoSync') === 'true';
+
+    // DOM elements
+    const phone = document.getElementById('phone');
+    const grid = document.getElementById('grid');
+    const toolbar = document.getElementById('toolbar');
+    const sortAZ = document.getElementById('sortAZ');
+    const done = document.getElementById('done');
+    const homeBtn = document.getElementById('homeBtn');
+    const appSwitcherBtn = document.getElementById('appSwitcherBtn');
+    const appSwitcher = document.getElementById('appSwitcher');
+    const appSwitcherBody = document.getElementById('appSwitcherBody');
+    const closeSwitcher = document.getElementById('closeSwitcher');
+    const scrollIndicator = document.getElementById('scrollIndicator');
+    const timeElement = document.getElementById('time');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const colorPicker = document.getElementById('colorPicker');
+    const resetColorBtn = document.getElementById('resetColor');
+    const syncAppDropsBtn = document.getElementById('syncAppDrops');
+    const cleanAppDropsBtn = document.getElementById('cleanAppDrops');
+    const autoSyncToggle = document.getElementById('autoSyncToggle');
+    const syncStatus = document.getElementById('syncStatus');
+    const syncLog = document.getElementById('syncLog');
+    const appSearch = document.getElementById('appSearch');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const mesh = document.getElementById('mesh');
+
+    // Mobile optimizations
+    let isTouch = 'ontouchstart' in window;
+    let lastTouchTime = 0;
+    
+    // Prevent double-tap zoom
+    document.addEventListener('touchend', function (event) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchTime <= 300) {
+        event.preventDefault();
+      }
+      lastTouchTime = now;
+    }, false);
+
+    // Prevent pull-to-refresh on mobile
+    document.body.addEventListener('touchstart', e => {
+      if (e.touches.length !== 1) { return; }
+      const startY = e.touches[0].clientY;
+      document.body.addEventListener('touchmove', onMove, { passive: false });
+      
+      function onMove(e) {
+        const y = e.touches[0].clientY;
+        if (y > startY && window.pageYOffset === 0) {
+          e.preventDefault();
+        }
+      }
+      
+      document.body.addEventListener('touchend', () => {
+        document.body.removeEventListener('touchmove', onMove);
+      }, { once: true });
+    }, { passive: false });
+
+    // Load saved AppDrops
+    function loadSavedAppDrops() {
+      const savedApps = localStorage.getItem('appDrops');
+      if (savedApps) {
+        apps = JSON.parse(savedApps);
+        APPDROPS = [...apps];
+        renderTiles();
+        populateCategories();
+      }
+    }
+
+    // Save AppDrops
+    function saveAppDrops() {
+      localStorage.setItem('appDrops', JSON.stringify(apps));
+    }
+
+    // Log sync messages
+    function logSync(message) {
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const logEntry = document.createElement('div');
+      logEntry.textContent = `[${time}] ${message}`;
+      syncLog.appendChild(logEntry);
+      syncLog.scrollTop = syncLog.scrollHeight;
+    }
+
+    // Update network status
+    function updateNetworkStatus() {
+      isOnline = navigator.onLine;
+      syncAppDropsBtn.disabled = !isOnline;
+      cleanAppDropsBtn.disabled = !isOnline;
+      syncStatus.textContent = isOnline ? 'Online: Ready to sync' : 'Offline: Sync unavailable';
+      mesh.textContent = isOnline ? '⬡3' : '⬡✕';
+      if (isOnline) {
+        logSync('Network connection re-established. Ready to sync AppDrops.');
+      } else {
+        logSync('Network connection lost. Sync disabled.');
+      }
+    }
+
+    // Sync AppDrops
+    async function syncAppDrops() {
+      if (!isOnline) {
+        logSync('Cannot sync: No network connection.');
+        syncStatus.textContent = 'Offline: Sync unavailable';
+        return;
+      }
+
+      syncAppDropsBtn.disabled = true;
+      cleanAppDropsBtn.disabled = true;
+      syncStatus.textContent = 'Syncing...';
+      logSync('Initiating AppDrop sync with command center...');
+
+      try {
+        let remoteApps = [];
+        try {
+          const response = await fetch('https://charlesmack.github.io/command/appdrops.json');
+          remoteApps = await response.json();
+          logSync('Fetched AppDrops from JSON endpoint.');
+        } catch (jsonError) {
+          logSync(`JSON fetch failed: ${jsonError.message}. Falling back to HTML parsing.`);
+          const response = await fetch('https://charlesmack.github.io/command/appdrops/index.html');
+          const html = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const appDropLinks = doc.querySelectorAll('a[href*="/appdrops/"]');
+          remoteApps = Array.from(appDropLinks).map(link => {
+            const path = link.href;
+            const name = link.textContent.trim();
+            const id = path.split('/').pop().replace('.html', '');
+            return {
+              id,
+              name,
+              emoji: link.dataset.emoji || '🌟',
+              path,
+              description: link.dataset.description || 'No description available',
+              version: link.dataset.version || 'Unknown',
+              category: link.dataset.category || 'Uncategorized'
+            };
+          });
+        }
+
+        const existingIds = new Set(apps.map(app => app.id));
+        const newApps = remoteApps.filter(app => !existingIds.has(app.id));
+        apps = [...apps, ...newApps];
+        APPDROPS = [...apps];
+        saveAppDrops();
+        renderTiles();
+        populateCategories();
+
+        const badge = document.getElementById('syncBadge');
+        if (newApps.length > 0) {
+          badge.textContent = newApps.length;
+          badge.style.display = 'flex';
+        } else {
+          badge.style.display = 'none';
+        }
+
+        logSync(`Sync complete: ${newApps.length} new AppDrops added.`);
+        syncStatus.textContent = 'Sync complete';
+        setTimeout(() => {
+          syncStatus.textContent = 'Online: Ready to sync';
+          syncAppDropsBtn.disabled = false;
+          cleanAppDropsBtn.disabled = false;
+        }, 2000);
+      } catch (error) {
+        logSync(`Sync failed: ${error.message}`);
+        syncStatus.textContent = 'Sync failed';
+        setTimeout(() => {
+          syncStatus.textContent = 'Online: Ready to sync';
+          syncAppDropsBtn.disabled = false;
+          cleanAppDropsBtn.disabled = false;
+        }, 2000);
+      }
+    }
+
+    // Clean outdated AppDrops
+    async function cleanAppDrops() {
+      if (!isOnline) {
+        logSync('Cannot clean: No network connection.');
+        syncStatus.textContent = 'Offline: Clean unavailable';
+        return;
+      }
+
+      syncAppDropsBtn.disabled = true;
+      cleanAppDropsBtn.disabled = true;
+      syncStatus.textContent = 'Cleaning...';
+      logSync('Initiating AppDrop cleanup...');
+
+      try {
+        let remoteIds = new Set();
+        try {
+          const response = await fetch('https://charlesmack.github.io/command/appdrops.json');
+          const remoteApps = await response.json();
+          remoteIds = new Set(remoteApps.map(app => app.id));
+          logSync('Fetched AppDrop IDs from JSON endpoint.');
+        } catch (jsonError) {
+          logSync(`JSON fetch failed: ${jsonError.message}. Falling back to HTML parsing.`);
+          const response = await fetch('https://charlesmack.github.io/command/appdrops/index.html');
+          const html = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const appDropLinks = doc.querySelectorAll('a[href*="/appdrops/"]');
+          remoteIds = new Set(Array.from(appDropLinks).map(link => link.href.split('/').pop().replace('.html', '')));
+        }
+
+        const initialCount = apps.length;
+        apps = apps.filter(app => remoteIds.has(app.id));
+        APPDROPS = [...apps];
+        saveAppDrops();
+        renderTiles();
+        populateCategories();
+
+        logSync(`Cleanup complete: ${initialCount - apps.length} outdated AppDrops removed.`);
+        syncStatus.textContent = 'Cleanup complete';
+        setTimeout(() => {
+          syncStatus.textContent = 'Online: Ready to sync';
+          syncAppDropsBtn.disabled = false;
+          cleanAppDropsBtn.disabled = false;
+        }, 2000);
+      } catch (error) {
+        logSync(`Cleanup failed: ${error.message}`);
+        syncStatus.textContent = 'Cleanup failed';
+        setTimeout(() => {
+          syncStatus.textContent = 'Online: Ready to sync';
+          syncAppDropsBtn.disabled = false;
+          cleanAppDropsBtn.disabled = false;
+        }, 2000);
+      }
+    }
+
+    // Load saved color
+    function loadSavedColor() {
+      const savedColor = localStorage.getItem('themeColor') || '#00ff7f';
+      updateThemeColor(savedColor);
+      colorPicker.value = savedColor;
+    }
+
+    // Update theme color
+    function updateThemeColor(hex) {
+      const rgb = hexToRgb(hex);
+      const lightRgb = adjustBrightness(rgb, 1.2);
+      const darkRgb = adjustBrightness(rgb, 0.8);
+      document.documentElement.style.setProperty('--accent', hex);
+      document.documentElement.style.setProperty('--accent-light', `rgb(${lightRgb.r}, ${lightRgb.g}, ${lightRgb.b})`);
+      document.documentElement.style.setProperty('--accent-dark', `rgb(${darkRgb.r}, ${darkRgb.g}, ${darkRgb.b})`);
+      document.documentElement.style.setProperty('--accent-glow', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.3)`);
+      localStorage.setItem('themeColor', hex);
+    }
+
+    // Convert hex to RGB
+    function hexToRgb(hex) {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return { r, g, b };
+    }
+
+    // Adjust RGB brightness
+    function adjustBrightness({ r, g, b }, factor) {
+      return {
+        r: Math.min(255, Math.max(0, Math.round(r * factor))),
+        g: Math.min(255, Math.max(0, Math.round(g * factor))),
+        b: Math.min(255, Math.max(0, Math.round(b * factor)))
+      };
+    }
+
+    // Reset to default color
+    function resetToDefaultColor() {
+      const defaultColor = '#00ff7f';
+      updateThemeColor(defaultColor);
+      colorPicker.value = defaultColor;
+    }
+
+    // Update time
+    function updateTime() {
+      const now = new Date();
+      timeElement.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // Create particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = window.innerWidth < 768 ? 10 : 20; // Fewer particles on mobile
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 8}s`;
+        particlesContainer.appendChild(particle);
+      }
+    }
+    createParticles();
+
+    // Populate categories
+    function populateCategories() {
+      const categories = new Set(apps.map(app => app.category || 'Uncategorized'));
+      categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+      categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option);
+      });
+    }
+
+    // Render app tiles
+    function renderTiles() {
+      grid.innerHTML = '';
+      let filteredApps = apps;
+
+      const searchTerm = appSearch.value.toLowerCase();
+      if (searchTerm) {
+        filteredApps = filteredApps.filter(app =>
+          app.name.toLowerCase().includes(searchTerm) ||
+          (app.description || '').toLowerCase().includes(searchTerm)
+        );
+      }
+
+      const selectedCategory = categoryFilter.value;
+      if (selectedCategory !== 'all') {
+        filteredApps = filteredApps.filter(app => (app.category || 'Uncategorized') === selectedCategory);
+      }
+
+      filteredApps.forEach(app => {
+        const tile = document.createElement('div');
+        tile.className = 'tile';
+        tile.dataset.id = app.id;
+        tile.title = `${app.description || 'No description available'}\nVersion: ${app.version || 'Unknown'}\nCategory: ${app.category || 'Uncategorized'}`;
+        tile.innerHTML = `
+          <div class="icon">${app.emoji}</div>
+          <div class="name">${app.name}</div>
+          <div class="handle"></div>
+        `;
+        
+        // Enhanced touch handling
+        tile.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (!isEditMode) openApp(app);
+        });
+        
+        if (isTouch) {
+          tile.addEventListener('touchstart', (e) => startDragTile(e, tile, app), { passive: false });
+        } else {
+          tile.addEventListener('mousedown', (e) => startDragTile(e, tile, app));
+        }
+        
+        tile.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          toggleEditMode();
+        });
+        
+        // Long press for mobile edit mode
+        let longPressTimer;
+        tile.addEventListener('touchstart', (e) => {
+          longPressTimer = setTimeout(() => {
+            if (!isEditMode) {
+              navigator.vibrate && navigator.vibrate(50); // Haptic feedback
+              toggleEditMode();
+            }
+          }, 500);
+        });
+        
+        tile.addEventListener('touchend', () => {
+          clearTimeout(longPressTimer);
+        });
+        
+        tile.addEventListener('touchmove', () => {
+          clearTimeout(longPressTimer);
+        });
+        
+        grid.appendChild(tile);
+      });
+      checkScrollIndicator();
+    }
+
+    // Toggle edit mode
+    function toggleEditMode() {
+      isEditMode = !isEditMode;
+      toolbar.classList.toggle('show', isEditMode);
+      grid.querySelectorAll('.tile').forEach(tile => {
+        tile.classList.toggle('edit', isEditMode);
+        tile.classList.toggle('jiggle', isEditMode);
+      });
+      
+      // Haptic feedback on supported devices
+      if (navigator.vibrate && isEditMode) {
+        navigator.vibrate(100);
+      }
+    }
+
+    // Sort apps A-Z
+    sortAZ.addEventListener('click', () => {
+      apps.sort((a, b) => a.name.localeCompare(b.name));
+      saveAppDrops();
+      renderTiles();
+    });
+
+    // Exit edit mode
+    done.addEventListener('click', toggleEditMode);
+
+    // Enhanced drag and drop for mobile
+    function startDragTile(e, tile, app) {
+      if (!isEditMode) return;
+      e.preventDefault();
+      
+      const isTouch = e.type.startsWith('touch');
+      
+      draggedTile = tile.cloneNode(true);
+      draggedTile.classList.add('ghost');
+      document.body.appendChild(draggedTile);
+      
+      const rect = tile.getBoundingClientRect();
+      if (isTouch) {
+        const touch = e.touches[0];
+        touchOffsetX = touch.clientX - rect.left;
+        touchOffsetY = touch.clientY - rect.top;
+      } else {
+        touchOffsetX = e.offsetX;
+        touchOffsetY = e.offsetY;
+      }
+      
+      placeholder = document.createElement('div');
+      placeholder.className = 'placeholder';
+      tile.parentNode.insertBefore(placeholder, tile.nextSibling);
+      
+      if (isTouch) {
+        document.addEventListener('touchmove', moveDragTile, { passive: false });
+        document.addEventListener('touchend', endDragTile);
+      } else {
+        document.addEventListener('mousemove', moveDragTile);
+        document.addEventListener('mouseup', endDragTile);
+      }
+    }
+
+    function moveDragTile(e) {
+      if (!draggedTile) return;
+      e.preventDefault();
+      
+      let clientX, clientY;
+      if (e.type === 'touchmove') {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      
+      draggedTile.style.left = `${clientX - touchOffsetX}px`;
+      draggedTile.style.top = `${clientY - touchOffsetY}px`;
+      
+      const tiles = Array.from(grid.querySelectorAll('.tile'));
+      const placeholderIndex = tiles.indexOf(placeholder);
+      const target = document.elementFromPoint(clientX, clientY);
+      const targetTile = target?.closest('.tile');
+      
+      if (targetTile && targetTile !== draggedTile) {
+        const targetIndex = tiles.indexOf(targetTile);
+        grid.insertBefore(placeholder, targetIndex < placeholderIndex ? targetTile : targetTile.nextSibling);
+        
+        const newOrder = tiles.filter(t => t !== draggedTile && t !== placeholder);
+        const appId = draggedTile.dataset.id;
+        const appIndex = apps.findIndex(a => a.id === appId);
+        apps.splice(appIndex, 1);
+        apps.splice(targetIndex, 0, APPDROPS.find(a => a.id === appId));
+      }
+    }
+
+    function endDragTile() {
+      if (draggedTile) {
+        draggedTile.remove();
+        placeholder.remove();
+        draggedTile = null;
+        placeholder = null;
+        saveAppDrops();
+        renderTiles();
+      }
+      document.removeEventListener('mousemove', moveDragTile);
+      document.removeEventListener('touchmove', moveDragTile);
+      document.removeEventListener('mouseup', endDragTile);
+      document.removeEventListener('touchend', endDragTile);
+    }
+
+    // Drag panel with touch support
+    function startDragPanel(e, panel) {
+      e.preventDefault();
+      bringToFront(panel);
+      
+      const isTouch = e.type.startsWith('touch');
+      const rect = panel.getBoundingClientRect();
+      
+      let offsetX, offsetY;
+      if (isTouch) {
+        offsetX = e.touches[0].clientX - rect.left;
+        offsetY = e.touches[0].clientY - rect.top;
+      } else {
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+      }
+
+      function onMove(e) {
+        e.preventDefault();
+        let clientX, clientY;
+        
+        if (e.type === 'touchmove') {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        } else {
+          clientX = e.clientX;
+          clientY = e.clientY;
+        }
+        
+        const phoneRect = phone.getBoundingClientRect();
+        let newLeft = clientX - offsetX - phoneRect.left;
+        let newTop = clientY - offsetY - phoneRect.top;
+        
+        // Constrain to phone boundaries
+        newLeft = Math.max(0, Math.min(newLeft, phoneRect.width - panel.offsetWidth));
+        newTop = Math.max(0, Math.min(newTop, phoneRect.height - panel.offsetHeight - 60)); // 60px for dock
+        
+        panel.style.left = `${newLeft}px`;
+        panel.style.top = `${newTop}px`;
+      }
+
+      function onEnd() {
+        if (isTouch) {
+          document.removeEventListener('touchmove', onMove);
+          document.removeEventListener('touchend', onEnd);
+        } else {
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onEnd);
+        }
+      }
+
+      if (isTouch) {
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onEnd);
+      } else {
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onEnd);
+      }
+    }
+
+    // Bring panel to front
+    function bringToFront(panel) {
+      document.querySelectorAll('.panel, .settings-panel').forEach(p => p.classList.remove('active'));
+      panel.style.zIndex = ++highestZ;
+      panel.classList.add('active');
+      home.style.display = 'none';
+      appSwitcher.classList.remove('show');
+    }
+
+    // Open app with loading state
+    function openApp(app) {
+      if (isEditMode) return;
+      
+      let panel = document.querySelector(`.panel[data-id="${app.id}"]`);
+      if (panel) {
+        bringToFront(panel);
+        panel.style.display = 'flex';
+        return;
+      }
+      
+      panel = document.createElement('div');
+      panel.className = 'panel active';
+      panel.dataset.id = app.id;
+      panel.innerHTML = `
+        <div class="p-head" onmousedown="startDragPanel(event, this.parentElement)" ontouchstart="startDragPanel(event, this.parentElement)">
+          <div class="app-title">${app.name}</div>
+          <div class="app-actions">
+            <button class="btn minimize">–</button>
+            <button class="btn new-tab">↗️</button>
+            <button class="btn close">✕</button>
+          </div>
+        </div>
+        <div class="p-body">
+          <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--accent);">
+            Loading ${app.name}...
+          </div>
+        </div>
+      `;
+      phone.appendChild(panel);
+      
+      // Load iframe after a short delay to show loading state
+      setTimeout(() => {
+        const body = panel.querySelector('.p-body');
+        body.innerHTML = `<iframe src="${app.path}" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>`;
+      }, 500);
+      
+      openApps.push({ id: app.id, name: app.name, emoji: app.emoji, panel });
+      
+      const dockBtn = document.createElement('div');
+      dockBtn.className = 'dock-item';
+      dockBtn.textContent = app.emoji;
+      dockBtn.title = app.name;
+      dockBtn.onclick = () => {
+        panel.style.display = 'flex';
+        bringToFront(panel);
+      };
+      document.querySelector('.dock').appendChild(dockBtn);
+      
+      panel.querySelector('.minimize').addEventListener('click', () => {
+        panel.style.display = 'none';
+        if (!document.querySelector('.panel.active') && !settingsPanel.classList.contains('active')) {
+          home.style.display = 'block';
+        }
+      });
+      
+      panel.querySelector('.new-tab').addEventListener('click', () => {
+        window.open(app.path, '_blank');
+      });
+      
+      panel.querySelector('.close').addEventListener('click', () => {
+        panel.remove();
+        dockBtn.remove();
+        openApps = openApps.filter(a => a.id !== app.id);
+        updateAppSwitcher();
+        if (!document.querySelector('.panel.active') && !settingsPanel.classList.contains('active')) {
+          home.style.display = 'block';
+        }
+      });
+      
+      panel.addEventListener('mousedown', () => bringToFront(panel));
+      panel.addEventListener('touchstart', () => bringToFront(panel));
+      
+      updateAppSwitcher();
+      home.style.display = 'none';
+    }
+
+    // Open settings panel
+    function openSettings() {
+      bringToFront(settingsPanel);
+      settingsPanel.style.display = 'flex';
+      updateNetworkStatus();
+      document.getElementById('syncBadge').style.display = 'none';
+    }
+
+    // Settings panel event listeners
+    settingsBtn.addEventListener('click', openSettings);
+
+    settingsPanel.querySelector('.minimize').addEventListener('click', () => {
+      settingsPanel.style.display = 'none';
+      if (!document.querySelector('.panel.active')) {
+        home.style.display = 'block';
+      }
+    });
+
+    settingsPanel.querySelector('.close').addEventListener('click', () => {
+      settingsPanel.style.display = 'none';
+      if (!document.querySelector('.panel.active')) {
+        home.style.display = 'block';
+      }
+    });
+
+    // Color selection
+    document.querySelectorAll('.color-swatch').forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        const color = swatch.dataset.color;
+        updateThemeColor(color);
+        colorPicker.value = color;
+      });
+    });
+
+    colorPicker.addEventListener('input', (e) => {
+      updateThemeColor(e.target.value);
+    });
+
+    resetColorBtn.addEventListener('click', resetToDefaultColor);
+
+    // Sync and clean event listeners
+    syncAppDropsBtn.addEventListener('click', syncAppDrops);
+    cleanAppDropsBtn.addEventListener('click', cleanAppDrops);
+
+    // Auto-sync toggle
+    autoSyncToggle.checked = autoSyncEnabled;
+    autoSyncToggle.addEventListener('change', () => {
+      autoSyncEnabled = autoSyncToggle.checked;
+      localStorage.setItem('autoSync', autoSyncEnabled);
+      logSync(`Auto-sync ${autoSyncEnabled ? 'enabled' : 'disabled'}.`);
+    });
+
+    // Network status listeners
+    window.addEventListener('online', () => {
+      updateNetworkStatus();
+      if (autoSyncEnabled) syncAppDrops();
+    });
+    window.addEventListener('offline', updateNetworkStatus);
+
+    // Update app switcher
+    function updateAppSwitcher() {
+      appSwitcherBody.innerHTML = openApps.length === 0 
+        ? '<div class="app-switcher-empty">No apps open. Launch an AppDrop to start.</div>'
+        : '';
+      
+      openApps.forEach(app => {
+        const tile = document.createElement('div');
+        tile.className = 'app-switcher-tile';
+        tile.dataset.id = app.id;
+        tile.innerHTML = `
+          <div class="name">${app.name}</div>
+          <div class="icon">${app.emoji}</div>
+          <div class="close-btn">✕</div>
+        `;
+        tile.addEventListener('click', () => {
+          app.panel.style.display = 'flex';
+          bringToFront(app.panel);
+          appSwitcher.classList.remove('show');
+          home.style.display = 'none';
+        });
+        tile.querySelector('.close-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          app.panel.remove();
+          document.querySelector(`.dock-item[title="${app.name}"]`)?.remove();
+          openApps = openApps.filter(a => a.id !== app.id);
+          updateAppSwitcher();
+          if (!document.querySelector('.panel.active') && !settingsPanel.classList.contains('active')) {
+            home.style.display = 'block';
+          }
+        });
+        appSwitcherBody.appendChild(tile);
+      });
+    }
+
+    // Show/hide app switcher
+    appSwitcherBtn.addEventListener('click', () => {
+      appSwitcher.classList.toggle('show');
+      home.style.display = appSwitcher.classList.contains('show') ? 'none' : (document.querySelector('.panel.active') || settingsPanel.classList.contains('active')) ? 'none' : 'block';
+    });
+
+    closeSwitcher.addEventListener('click', () => {
+      appSwitcher.classList.remove('show');
+      home.style.display = (document.querySelector('.panel.active') || settingsPanel.classList.contains('active')) ? 'none' : 'block';
+    });
+
+    // Go to home
+    homeBtn.addEventListener('click', () => {
+      appSwitcher.classList.remove('show');
+      document.querySelectorAll('.panel, .settings-panel').forEach(p => {
+        p.style.display = 'none';
+      });
+      home.style.display = 'block';
+    });
+
+    // Check scroll indicator
+    function checkScrollIndicator() {
+      const gridHeight = grid.scrollHeight;
+      const containerHeight = grid.clientHeight;
+      scrollIndicator.classList.toggle('show', gridHeight > containerHeight);
+    }
+
+    grid.addEventListener('scroll', checkScrollIndicator);
+    window.addEventListener('resize', () => {
+      checkScrollIndicator();
+      // Recreate particles on resize for better mobile performance
+      document.getElementById('particles').innerHTML = '';
+      createParticles();
+    });
+
+    // Search and filter with debouncing for better mobile performance
+    let searchTimeout;
+    appSearch.addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(renderTiles, 300);
+    });
+    categoryFilter.addEventListener('change', renderTiles);
+
+    // Orientation change handling
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        checkScrollIndicator();
+        renderTiles();
+      }, 100);
+    });
+
+    // Prevent zoom on double tap for certain elements
+    ['input', 'select', 'textarea'].forEach(selector => {
+      document.addEventListener('touchend', (e) => {
+        if (e.target.matches(selector)) {
+          e.preventDefault();
+        }
+      });
+    });
+
+    // Initialize everything
+    loadSavedColor();
+    loadSavedAppDrops();
+    updateNetworkStatus();
+    renderTiles();
+    populateCategories();
+
+    // Service Worker registration for better caching (optional)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {
+          // Silently fail if no service worker available
+        });
+      });
+    }
+
+    // Performance optimization: Use passive event listeners where possible
+    const passiveEvents = ['touchstart', 'touchmove', 'wheel'];
+    passiveEvents.forEach(eventType => {
+      document.addEventListener(eventType, () => {}, { passive: true });
+    });
+
+    // Add visual feedback for touch interactions
+    document.addEventListener('touchstart', (e) => {
+      const target = e.target.closest('.btn, .tile, .d, .color-swatch');
+      if (target) {
+        target.style.transform = 'scale(0.95)';
+        target.style.transition = 'transform 0.1s ease';
+      }
+    });
+
+    document.addEventListener('touchend', (e) => {
+      const target = e.target.closest('.btn, .tile, .d, .color-swatch');
+      if (target) {
+        setTimeout(() => {
+          target.style.transform = '';
+          target.style.transition = '';
+        }, 100);
+      }
+    });
+
+    // Memory management for better mobile performance
+    window.addEventListener('beforeunload', () => {
+      // Clear any intervals or timeouts
+      document.getElementById('particles').innerHTML = '';
+    });
+
+    // Handle app visibility changes to pause/resume animations
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        document.querySelectorAll('.particle').forEach(p => {
+          p.style.animationPlayState = 'paused';
+        });
+      } else {
+        document.querySelectorAll('.particle').forEach(p => {
+          p.style.animationPlayState = 'running';
+        });
+      }
+    });
+
+    // Add haptic feedback for supported devices
+    function hapticFeedback(intensity = 'light') {
+      if (navigator.vibrate) {
+        const patterns = {
+          light: 50,
+          medium: 100,
+          heavy: 200
+        };
+        navigator.vibrate(patterns[intensity] || 50);
+      }
+    }
+
+    // Enhanced button interactions with haptic feedback
+    document.addEventListener('click', (e) => {
+      const button = e.target.closest('.btn, .d');
+      if (button) {
+        hapticFeedback('light');
+      }
+    });
+
+    // Add swipe gestures for mobile navigation
+    let startX, startY, startTime;
+    
+    document.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startTime = Date.now();
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      if (!startX || !startY) return;
+      
+      const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
+      const deltaX = endX - startX;
+      const deltaY = endY - startY;
+      const deltaTime = Date.now() - startTime;
+      
+      // Only process swipes that are fast and significant
+      if (deltaTime < 500 && Math.abs(deltaX) > 50 && Math.abs(deltaY) < 100) {
+        if (deltaX > 0 && Math.abs(deltaX) > Math.abs(deltaY)) {
+          // Swipe right - could go to home or back
+          if (!home.style.display || home.style.display === 'none') {
+            homeBtn.click();
+            hapticFeedback('medium');
+          }
+        } else if (deltaX < 0 && Math.abs(deltaX) > Math.abs(deltaY)) {
+          // Swipe left - could open app switcher
+          if (home.style.display !== 'none') {
+            appSwitcherBtn.click();
+            hapticFeedback('medium');
+          }
+        }
+      }
+      
+      startX = startY = null;
+    }, { passive: true });
+
+    // Add pull-to-refresh for sync (disabled by default to prevent conflicts)
+    let pullStartY = 0;
+    let isPulling = false;
+    
+    grid.addEventListener('touchstart', (e) => {
+      if (grid.scrollTop === 0) {
+        pullStartY = e.touches[0].clientY;
+        isPulling = false;
+      }
+    }, { passive: true });
+
+    grid.addEventListener('touchmove', (e) => {
+      if (grid.scrollTop === 0 && pullStartY) {
+        const currentY = e.touches[0].clientY;
+        const pullDistance = currentY - pullStartY;
+        
+        if (pullDistance > 100 && !isPulling) {
+          isPulling = true;
+          hapticFeedback('medium');
+          // Visual feedback could be added here
+        }
+      }
+    }, { passive: true });
+
+    grid.addEventListener('touchend', () => {
+      if (isPulling) {
+        isPulling = false;
+        // Uncomment to enable pull-to-sync
+        // syncAppDrops();
+      }
+      pullStartY = 0;
+    }, { passive: true });
+
+    console.log('P.O.P.S. Mobile Interface Loaded Successfully');
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a160b" />
+  <title>P.O.P.S. — Professional Production Mobile</title>
+  <meta name="description" content="P.O.P.S. single-page interface with draggable, resizable app panels, AppDock, and AppDrop catalog." />
+  <style>
+    :root {
+      --bg: radial-gradient(1200px 800px at 50% -10%, #1a1a1a 0%, #0e0e0e 40%, #0a0a0a 100%);
+      --accent: #00ff7f; 
+      --accent-light: #33ff99;
+      --accent-dark: #00cc66;
+      --accent-glow: rgba(0, 255, 127, 0.3);
+      --muted: #9fe7c6;
+      --glass: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --shadow-glow: 0 0 40px var(--accent-glow);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --dock-h: clamp(60px, 15vw, 80px);
+      --status-h: clamp(24px, 6vw, 32px);
+      --editbar-h: clamp(32px, 8vw, 40px);
+      --tile-size: clamp(90px, 25vw, 120px);
+      --gap-size: clamp(8px, 3vw, 16px);
+    }
+    
+    * { 
+      box-sizing: border-box; 
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    html, body {
+      height: 100dvh;
+      height: 100vh; /* fallback */
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--bg);
+      color: #fff;
+      overflow: hidden;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    
+    .bg-particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: float 8s infinite ease-in-out;
+      box-shadow: 0 0 6px var(--accent);
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+      50% { transform: translateY(-30px) rotate(180deg); opacity: 0.2; }
+    }
+    
+    .phone {
+      width: 100vw;
+      height: 100dvh;
+      height: 100vh; /* fallback */
+      background: linear-gradient(145deg, rgba(21, 24, 21, 0.95), rgba(12, 18, 12, 0.95));
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      overflow: hidden;
+      position: relative;
+      padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+      backdrop-filter: blur(20px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .status {
+      height: var(--status-h);
+      padding: 0 clamp(12px, 4vw, 20px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), var(--accent-glow));
+      border-bottom: 1px solid var(--accent-glow);
+      backdrop-filter: blur(20px);
+      z-index: 1000;
+      position: relative;
+    }
+    
+    .time {
+      font-weight: 700;
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent-glow);
+      font-size: clamp(14px, 4vw, 18px);
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes glow {
+      from { text-shadow: 0 0 10px var(--accent-glow); }
+      to { text-shadow: 0 0 20px var(--accent-glow), 0 0 30px var(--accent-glow); }
+    }
+    
+    .mesh {
+      font-size: clamp(10px, 3vw, 12px);
+      padding: clamp(3px, 1vw, 5px) clamp(8px, 2.5vw, 12px);
+      border-radius: 15px;
+      border: 1px solid var(--accent);
+      background: linear-gradient(135deg, var(--accent-glow), rgba(255, 255, 255, 0.05));
+      color: var(--accent);
+      box-shadow: var(--shadow-glow);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { box-shadow: var(--shadow-glow); }
+      50% { box-shadow: 0 0 60px var(--accent-glow); }
+    }
+    
+    .toolbar {
+      position: absolute;
+      top: calc(var(--status-h) + var(--gap-size));
+      left: var(--gap-size);
+      right: var(--gap-size);
+      height: var(--editbar-h);
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(12px, 3vw, 16px);
+      border-radius: clamp(12px, 3vw, 16px);
+      background: linear-gradient(135deg, rgba(10, 30, 15, 0.95), var(--accent-glow));
+      border: 1px solid var(--accent);
+      backdrop-filter: blur(20px);
+      z-index: 999;
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-10px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .toolbar.show {
+      display: flex;
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .btn {
+      background: linear-gradient(135deg, rgba(26, 59, 26, 0.9), var(--accent-glow));
+      border: 1px solid var(--accent);
+      color: #cbffd9;
+      padding: clamp(6px, 2vw, 8px) clamp(12px, 3vw, 16px);
+      border-radius: clamp(8px, 2vw, 12px);
+      font-size: clamp(11px, 3vw, 13px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      touch-action: manipulation;
+      min-height: 44px; /* iOS touch target */
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .btn:hover, .btn:active {
+      background: linear-gradient(135deg, var(--accent-light), var(--accent-glow));
+      box-shadow: 0 8px 25px var(--accent-glow);
+      transform: translateY(-2px);
+    }
+    
+    .btn:hover::before, .btn:active::before {
+      transform: translateX(100%);
+    }
+    
+    .btn:disabled {
+      background: linear-gradient(135deg, rgba(26, 59, 26, 0.5), rgba(0, 0, 0, 0.5));
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.5);
+      cursor: not-allowed;
+    }
+    
+    .home {
+      position: absolute;
+      inset: calc(var(--status-h) + var(--editbar-h) + var(--gap-size) * 2) 0 var(--dock-h) 0;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .search-container {
+      display: flex;
+      gap: var(--gap-size);
+      padding: clamp(8px, 2.5vw, 12px) clamp(12px, 3vw, 20px);
+      background: var(--glass);
+      border-bottom: 1px solid var(--accent-glow);
+    }
+    
+    #appSearch, #categoryFilter {
+      flex: 1;
+      padding: clamp(8px, 2vw, 12px);
+      border-radius: clamp(6px, 2vw, 8px);
+      border: 1px solid var(--accent);
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
+      font-size: clamp(12px, 3.5vw, 14px);
+      min-height: 44px; /* iOS touch target */
+    }
+    
+    .grid {
+      height: 100%;
+      padding: clamp(12px, 3vw, 20px);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(var(--tile-size), 1fr));
+      gap: var(--gap-size);
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      grid-auto-rows: var(--tile-size);
+      justify-items: center;
+    }
+    
+    /* Better mobile grid for smaller screens */
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(8px, 2vw, 12px);
+        padding: clamp(8px, 2vw, 16px);
+      }
+    }
+    
+    @media (min-width: 481px) and (max-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    @media (min-width: 769px) {
+      .grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
+    
+    .grid::-webkit-scrollbar {
+      width: clamp(4px, 1vw, 6px);
+    }
+    
+    .grid::-webkit-scrollbar-track {
+      background: var(--accent-glow);
+      border-radius: 3px;
+    }
+    
+    .grid::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+      border-radius: 3px;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    
+    .grid::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    
+    .tile {
+      width: 100%;
+      height: 100%;
+      max-width: var(--tile-size);
+      max-height: var(--tile-size);
+      border-radius: clamp(16px, 4vw, 20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: linear-gradient(145deg, var(--glass), var(--accent-glow));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(15px);
+      overflow: hidden;
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+    }
+    
+    .tile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+    
+    .tile:hover, .tile:active {
+      transform: translateY(-4px) scale(1.02);
+      background: linear-gradient(145deg, var(--accent-glow), rgba(255, 255, 255, 0.05));
+      border-color: var(--accent);
+      box-shadow: 0 20px 40px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    
+    .tile:hover::before, .tile:active::before {
+      transform: translateX(100%);
+    }
+    
+    .icon {
+      width: clamp(40px, 12vw, 52px);
+      height: clamp(40px, 12vw, 52px);
+      border-radius: clamp(12px, 3vw, 16px);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(236, 236, 236, 0.8));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(20px, 6vw, 26px);
+      margin-bottom: clamp(8px, 2vw, 12px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .icon::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.4s ease;
+    }
+    
+    .tile:hover .icon, .tile:active .icon {
+      transform: scale(1.05);
+      box-shadow: 0 12px 30px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+    
+    .tile:hover .icon::before, .tile:active .icon::before {
+      transform: translateX(100%);
+    }
+    
+    .name {
+      font-weight: 700;
+      text-align: center;
+      font-size: clamp(10px, 2.8vw, 13px);
+      color: rgba(255, 255, 255, 0.9);
+      transition: color 0.3s ease;
+      line-height: 1.2;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .tile:hover .name, .tile:active .name {
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent-glow);
+    }
+    
+    .handle {
+      position: absolute;
+      right: clamp(6px, 2vw, 8px);
+      bottom: clamp(6px, 2vw, 8px);
+      width: clamp(20px, 5vw, 24px);
+      height: clamp(10px, 3vw, 12px);
+      border-radius: 8px;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-dark) 30%, var(--accent) 60%, var(--accent-dark) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      animation: handleGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes handleGlow {
+      0%, 100% { box-shadow: 0 0 10px var(--accent-glow); }
+      50% { box-shadow: 0 0 20px var(--accent-glow); }
+    }
+    
+    .edit .handle {
+      opacity: 1;
+    }
+    
+    .jiggle {
+      animation: jig 0.4s ease-in-out infinite, tileGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes jig {
+      0% { transform: rotate(-2deg) scale(1.01); }
+      25% { transform: rotate(1.5deg) scale(1.01); }
+      50% { transform: rotate(-1.5deg) scale(1.01); }
+      75% { transform: rotate(2deg) scale(1.01); }
+      100% { transform: rotate(-2deg) scale(1.01); }
+    }
+    
+    @keyframes tileGlow {
+      0%, 100% { box-shadow: 0 0 20px var(--accent-glow); }
+      50% { box-shadow: 0 0 40px var(--accent-glow); }
+    }
+    
+    .ghost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: scale(1.1) rotate(3deg);
+      box-shadow: 0 25px 50px var(--accent-glow);
+      border: 2px solid var(--accent);
+    }
+    
+    .placeholder {
+      outline: 3px dashed var(--accent);
+      border-radius: clamp(16px, 4vw, 20px);
+      background: var(--accent-glow);
+      animation: placeholderPulse 1s ease-in-out infinite;
+    }
+    
+    @keyframes placeholderPulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.8; }
+    }
+    
+    .dock {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: var(--dock-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 20px);
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.85), var(--accent-glow));
+      backdrop-filter: blur(25px);
+      border-top: 1px solid var(--accent-glow);
+      z-index: 1000;
+      gap: clamp(8px, 2vw, 12px);
+    }
+    
+    .dock .d {
+      width: clamp(48px, 12vw, 60px);
+      height: clamp(48px, 12vw, 60px);
+      min-width: 44px; /* iOS touch target */
+      min-height: 44px;
+      border-radius: clamp(14px, 3vw, 18px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(20px, 5vw, 26px);
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent-light), var(--accent-dark));
+      box-shadow: 0 10px 25px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+    
+    .dock .d::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+    
+    .dock .d:hover, .dock .d:active {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 15px 35px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+    
+    .dock .d:hover::before, .dock .d:active::before {
+      transform: translateX(100%);
+    }
+    
+    .dock-item {
+      background: linear-gradient(135deg, rgba(26, 59, 26, 0.9), var(--accent-glow));
+      color: #cbffd9;
+      padding: clamp(4px, 1.5vw, 6px) clamp(8px, 2vw, 10px);
+      border-radius: clamp(4px, 1.5vw, 6px);
+      cursor: pointer;
+      font-size: clamp(12px, 3vw, 14px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 44px; /* iOS touch target */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .dock-item:hover, .dock-item:active {
+      transform: translateY(-3px);
+      background: linear-gradient(135deg, var(--accent-light), var(--accent-glow));
+      box-shadow: 0 8px 25px var(--accent-glow);
+    }
+    
+    .badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: #ff073a;
+      color: #fff;
+      font-size: clamp(8px, 2vw, 10px);
+      font-weight: 700;
+      width: clamp(16px, 4vw, 18px);
+      height: clamp(16px, 4vw, 18px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    
+    .panel {
+      position: absolute;
+      width: calc(100% - clamp(16px, 4vw, 24px));
+      height: calc(100% - var(--status-h) - var(--dock-h) - clamp(12px, 3vw, 16px));
+      top: calc(var(--status-h) + clamp(6px, 1.5vw, 8px));
+      left: clamp(8px, 2vw, 12px);
+      border-radius: clamp(20px, 5vw, 24px);
+      border: 1px solid var(--accent);
+      background: linear-gradient(145deg, rgba(12, 20, 15, 0.98), var(--accent-glow));
+      backdrop-filter: blur(25px);
+      display: none;
+      flex-direction: column;
+      overflow: auto;
+      box-shadow: var(--shadow-glow);
+      z-index: 1;
+      resize: both;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .panel.active {
+      display: flex;
+      z-index: 10;
+    }
+    
+    .p-head {
+      background: linear-gradient(135deg, var(--accent-glow), transparent);
+      padding: clamp(8px, 2.5vw, 10px);
+      font-weight: bold;
+      cursor: move;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+      min-height: 44px; /* iOS touch target */
+    }
+    
+    .p-head .app-title {
+      font-weight: 800;
+      color: var(--accent);
+      font-size: clamp(16px, 4vw, 18px);
+      text-shadow: 0 0 10px var(--accent-glow);
+    }
+    
+    .p-head .app-actions {
+      display: flex;
+      gap: clamp(8px, 2vw, 12px);
+    }
+    
+    .p-head .app-actions .btn {
+      padding: clamp(6px, 2vw, 8px) clamp(10px, 2.5vw, 14px);
+      font-size: clamp(11px, 3vw, 13px);
+    }
+    
+    .p-body {
+      flex: 1;
+      position: relative;
+      background: rgba(0, 0, 0, 0.3);
+      overflow: auto;
+      padding: clamp(16px, 4vw, 20px);
+    }
+    
+    .p-body iframe {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #000;
+      border-radius: 0 0 clamp(20px, 5vw, 24px) clamp(20px, 5vw, 24px);
+    }
+    
+    .scroll-indicator {
+      position: absolute;
+      bottom: calc(var(--dock-h) + clamp(16px, 4vw, 20px));
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--accent);
+      font-size: clamp(10px, 3vw, 12px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      text-align: center;
+      padding: clamp(4px, 1vw, 6px) clamp(8px, 2vw, 12px);
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: clamp(12px, 3vw, 16px);
+      border: 1px solid var(--accent-glow);
+    }
+    
+    .scroll-indicator.show {
+      opacity: 0.7;
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+      40% { transform: translateX(-50%) translateY(-10px); }
+      60% { transform: translateX(-50%) translateY(-5px); }
+    }
+    
+    .app-switcher-tile {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: clamp(12px, 3vw, 16px);
+      margin-bottom: clamp(8px, 2vw, 12px);
+      background: linear-gradient(135deg, var(--glass), var(--accent-glow));
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: clamp(12px, 3vw, 16px);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 44px; /* iOS touch target */
+      touch-action: manipulation;
+    }
+    
+    .app-switcher-tile:hover, .app-switcher-tile:active {
+      background: linear-gradient(135deg, var(--accent-glow), rgba(255, 255, 255, 0.05));
+      border-color: var(--accent);
+      box-shadow: 0 8px 20px var(--accent-glow);
+      transform: translateY(-2px);
+    }
+    
+    .app-switcher-tile .name {
+      font-weight: 600;
+      font-size: clamp(14px, 3.5vw, 16px);
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .app-switcher-tile .icon {
+      font-size: clamp(20px, 5vw, 24px);
+      width: auto;
+      height: auto;
+      background: none;
+      box-shadow: none;
+      margin: 0;
+      border-radius: 0;
+    }
+    
+    .close-btn {
+      background: rgba(255, 7, 58, 0.8);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: clamp(28px, 7vw, 32px);
+      height: clamp(28px, 7vw, 32px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: clamp(16px, 4vw, 18px);
+      font-weight: bold;
+      transition: all 0.2s ease;
+      min-width: 44px; /* iOS touch target */
+      min-height: 44px;
+    }
+    
+    .close-btn:hover, .close-btn:active {
+      background: rgba(255, 7, 58, 1);
+      transform: scale(1.1);
+    }
+    
+    .settings-panel {
+      position: absolute;
+      width: calc(100% - clamp(16px, 4vw, 24px));
+      height: calc(100% - var(--status-h) - var(--dock-h) - clamp(12px, 3vw, 16px));
+      top: calc(var(--status-h) + clamp(6px, 1.5vw, 8px));
+      left: clamp(8px, 2vw, 12px);
+      border-radius: clamp(20px, 5vw, 24px);
+      border: 1px solid var(--accent);
+      background: linear-gradient(145deg, rgba(12, 20, 15, 0.98), var(--accent-glow));
+      backdrop-filter: blur(25px);
+      display: none;
+      flex-direction: column;
+      overflow: auto;
+      box-shadow: var(--shadow-glow);
+      z-index: 1;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .settings-panel.active {
+      display: flex;
+      z-index: 10;
+    }
+    
+    .settings-body {
+      flex: 1;
+      padding: clamp(16px, 4vw, 20px);
+      overflow-y: auto;
+    }
+    
+    .settings-body h2 {
+      font-size: clamp(16px, 4vw, 18px);
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: clamp(16px, 4vw, 20px);
+      text-shadow: 0 0 10px var(--accent-glow);
+    }
+    
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(clamp(60px, 15vw, 80px), 1fr));
+      gap: clamp(12px, 3vw, 16px);
+      margin-bottom: clamp(20px, 5vw, 24px);
+      max-width: 100%;
+    }
+    
+    /* Ensure color grid is mobile responsive */
+    @media (max-width: 480px) {
+      .color-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: clamp(8px, 2vw, 12px);
+      }
+    }
+    
+    .color-swatch {
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: clamp(8px, 2vw, 12px);
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      min-height: 44px; /* iOS touch target */
+      touch-action: manipulation;
+    }
+    
+    .color-swatch:hover, .color-swatch:active {
+      transform: scale(1.05);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 20px var(--accent-glow);
+    }
+    
+    .color-picker-container {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 2vw, 12px);
+      margin-bottom: clamp(20px, 5vw, 24px);
+    }
+    
+    .color-picker-container label {
+      font-size: clamp(12px, 3.5vw, 14px);
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .color-picker-container input[type="color"] {
+      width: 100%;
+      height: clamp(40px, 10vw, 50px);
+      border-radius: clamp(6px, 2vw, 8px);
+      border: 1px solid var(--accent);
+      cursor: pointer;
+      min-height: 44px; /* iOS touch target */
+    }
+    
+    .reset-button {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.7), rgba(255, 0, 0, 0.3));
+      border: 1px solid rgba(255, 0, 0, 0.8);
+      color: #fff;
+      padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px);
+      border-radius: clamp(8px, 2vw, 12px);
+      font-size: clamp(12px, 3vw, 14px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      text-align: center;
+      min-height: 44px; /* iOS touch target */
+      touch-action: manipulation;
+    }
+    
+    .reset-button:hover, .reset-button:active {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.9), rgba(255, 0, 0, 0.5));
+      box-shadow: 0 8px 25px rgba(255, 0, 0, 0.5);
+      transform: translateY(-2px);
+    }
+    
+    .reset-button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .reset-button:hover::before, .reset-button:active::before {
+      transform: translateX(100%);
+    }
+    
+    .sync-container {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 2vw, 12px);
+      margin-bottom: clamp(20px, 5vw, 24px);
+    }
+    
+    .auto-sync-container {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 2vw, 12px);
+      margin-bottom: clamp(20px, 5vw, 24px);
+      min-height: 44px; /* iOS touch target */
+    }
+    
+    .auto-sync-container label {
+      font-size: clamp(12px, 3.5vw, 14px);
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      flex: 1;
+    }
+    
+    .auto-sync-container input[type="checkbox"] {
+      width: clamp(20px, 5vw, 24px);
+      height: clamp(20px, 5vw, 24px);
+      cursor: pointer;
+      min-width: 44px; /* iOS touch target for the container */
+      min-height: 44px;
+    }
+    
+    .sync-status {
+      font-size: clamp(12px, 3.5vw, 14px);
+      color: rgba(255, 255, 255, 0.9);
+      text-align: center;
+      padding: clamp(8px, 2vw, 12px);
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: clamp(6px, 2vw, 8px);
+      border: 1px solid var(--accent-glow);
+    }
+    
+    .sync-log {
+      font-size: clamp(10px, 2.5vw, 12px);
+      color: var(--muted);
+      background: rgba(0, 0, 0, 0.3);
+      padding: clamp(8px, 2vw, 12px);
+      border-radius: clamp(6px, 2vw, 8px);
+      max-height: clamp(120px, 30vw, 150px);
+      overflow-y: auto;
+      border: 1px solid var(--accent-glow);
+      line-height: 1.4;
+    }
+    
+    /* Enhanced touch targets for mobile */
+    @media (max-width: 768px) {
+      .btn, .dock .d, .color-swatch, .auto-sync-container, .reset-button {
+        min-height: 44px;
+        min-width: 44px;
+      }
+      
+      /* Better spacing on smaller screens */
+      .grid {
+        padding: clamp(8px, 2vw, 16px);
+        gap: clamp(6px, 1.5vw, 10px);
+      }
+      
+      /* Reduce animations on mobile for better performance */
+      .tile:hover, .btn:hover, .dock .d:hover {
+        transform: translateY(-2px) scale(1.02);
+      }
+      
+      /* Optimize scrolling */
+      .grid, .settings-body, .app-switcher-body, .sync-log {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+      }
+    }
+    
+    /* Landscape orientation adjustments */
+    @media (orientation: landscape) and (max-height: 600px) {
+      :root {
+        --dock-h: clamp(50px, 12vw, 70px);
+        --status-h: clamp(20px, 5vw, 28px);
+        --tile-size: clamp(80px, 20vw, 100px);
+      }
+      
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(clamp(70px, 18vw, 90px), 1fr));
+        padding: clamp(6px, 1.5vw, 12px);
+      }
+      
+      .icon {
+        width: clamp(32px, 8vw, 40px);
+        height: clamp(32px, 8vw, 40px);
+        font-size: clamp(16px, 4vw, 20px);
+      }
+      
+      .name {
+        font-size: clamp(9px, 2.2vw, 11px);
+      }
+    }
+    
+    /* High DPI displays */
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      .particle {
+        width: 1px;
+        height: 1px;
+      }
+      
+      .grid::-webkit-scrollbar {
+        width: 3px;
+      }
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: radial-gradient(1200px 800px at 50% -10%, #0a0a0a 0%, #050505 40%, #000000 100%);
+      }
+    }
+    
+    /* Reduce motion for accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      
+      .particle {
+        animation: none;
+      }
+      
+      .scroll-indicator.show {
+        animation: none;
+      }
+    }
+    
+    /* High contrast mode */
+    @media (prefers-contrast: high) {
+      :root {
+        --accent: #00ff00;
+        --glass: rgba(255, 255, 255, 0.15);
+        --glass-border: rgba(255, 255, 255, 0.4);
+      }
+      
+      .tile, .panel, .settings-panel {
+        border-width: 2px;
+      }
+    }
+    
+    /* Focus styles for keyboard navigation */
+    .btn:focus, .tile:focus, .dock .d:focus, .color-swatch:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    
+    /* Ensure proper touch action for all interactive elements */
+    .btn, .tile, .dock .d, .color-swatch, .reset-button, .app-switcher-tile, .close-btn {
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    
+    /* iOS Safari specific fixes */
+    @supports (-webkit-touch-callout: none) {
+      .phone {
+        height: 100vh;
+        height: -webkit-fill-available;
+      }
+      
+      .grid, .settings-body, .app-switcher-body {
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      input, select, textarea {
+        font-size: 16px; /* Prevent zoom on focus */
+      }
+    }-switcher {
+      position: absolute;
+      width: calc(100% - clamp(16px, 4vw, 24px));
+      height: calc(100% - var(--status-h) - var(--dock-h) - clamp(12px, 3vw, 16px));
+      top: calc(var(--status-h) + clamp(6px, 1.5vw, 8px));
+      left: clamp(8px, 2vw, 12px);
+      border-radius: clamp(20px, 5vw, 24px);
+      border: 1px solid var(--accent);
+      background: linear-gradient(145deg, rgba(12, 20, 15, 0.98), var(--accent-glow));
+      backdrop-filter: blur(25px);
+      display: none;
+      flex-direction: column;
+      overflow: auto;
+      box-shadow: var(--shadow-glow);
+      z-index: 1;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .app-switcher.show {
+      display: flex;
+      z-index: 10;
+    }
+    
+    .app-switcher-head {
+      background: linear-gradient(135deg, var(--accent-glow), transparent);
+      padding: clamp(8px, 2.5vw, 10px);
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+      min-height: 44px; /* iOS touch target */
+    }
+    
+    .app-switcher-title {
+      font-weight: 800;
+      color: var(--accent);
+      font-size: clamp(16px, 4vw, 18px);
+      text-shadow: 0 0 10px var(--accent-glow);
+    }
+    
+    .app-switcher-body {
+      flex: 1;
+      padding: clamp(16px, 4vw, 20px);
+      overflow-y: auto;
+    }
+    
+    .app-switcher-empty {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: clamp(14px, 3.5vw, 16px);
+      padding: clamp(32px, 8vw, 40px);
+    }
+    
+    .app
