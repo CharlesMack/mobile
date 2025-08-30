@@ -154,3 +154,167 @@ License
 This project is licensed under the MIT License. See the LICENSE file for details.
 Contact
 For questions or collaboration, contact the maintainer via GitHub.
+
+
+P.O.P.S. — Professional Production Mobile
+P.O.P.S. (Professional Production Mobile) is a single-page, offline-first web interface designed for seamless, user-sovereign productivity on mobile devices. Built with a sleek, glassmorphic UI, it features draggable, resizable app panels, an AppDock for quick navigation, and an AppDrop catalog for extensible functionality. The system syncs with a command center to keep the AppDrop catalog up-to-date, ensuring a robust, production-ready environment for professionals.
+The command center’s AppDrop catalog (/command/appdrops/index.html) serves as the central hub for discovering and syncing AppDrops, enabling users to expand their P.O.P.S. environment with new tools and applications.
+Features
+
+Offline-First Design: Works seamlessly without an internet connection, caching AppDrops and user preferences in localStorage.
+User-Sovereign State: Persists app order, theme settings, and open panels across sessions.
+Dynamic AppDrop Sync: Integrates with the command center to fetch and add new AppDrops when online, with real-time sync feedback.
+Glassmorphic UI: Modern, visually appealing interface with draggable panels, animated tiles, and customizable themes.
+AppDock & AppSwitcher: Quick access to core functions (Home, Communications, Settings) and multitasking with open apps.
+Extensible AppDrop Catalog: Supports 33+ production-focused AppDrops, with easy integration of new apps via the command center.
+
+Installation
+Prerequisites
+
+A GitHub account and repository access (e.g., charlesmack/OnePagerMiniOS).
+GitHub Pages enabled for hosting the web interface.
+A modern web browser (Chrome, Safari, Firefox, or Edge).
+
+Setup
+
+Clone the Repository:
+git clone https://github.com/charlesmack/mobile.git
+cd mobile
+
+
+Verify Directory Structure:Ensure the following files are present:
+
+index.html: The main P.O.P.S. interface.
+command/appdrops/index.html: The command center’s AppDrop catalog.
+
+
+Enable GitHub Pages:
+
+Go to the repository’s Settings > Pages on GitHub.
+Set the source to the main branch (or gh-pages if used).
+Confirm the site is live at https://charlesmack.github.io/OnePagerMiniOS/ and the AppDrop catalog at https://charlesmack.github.io/command/appdrops/index.html.
+
+
+Deploy Updates:
+
+Make changes to index.html or command/appdrops/index.html.
+Commit and push to the repository:git add .
+git commit -m "Update P.O.P.S. interface and AppDrop catalog"
+git push origin main
+
+
+
+
+
+Usage
+
+Access P.O.P.S.:
+
+Open https://charlesmack.github.io/mobile/ in a web browser.
+The home screen displays a grid of AppDrop tiles, each launchable into a resizable panel.
+
+
+Navigate the Interface:
+
+AppDock: Use the bottom dock to access:
+🏠 Home: Return to the app grid.
+📞 Communications: Launch communication apps (if available).
+📱 App Switcher: View and manage open apps.
+⚙️ Settings: Customize the theme and sync AppDrops.
+
+
+Drag Tiles: Long-press a tile to enter edit mode and rearrange apps.
+Open Apps: Tap a tile to launch an app in a draggable, resizable panel.
+App Switcher: View open apps and close or switch between them.
+
+
+Sync AppDrops:
+
+Open the Settings panel (⚙️ icon).
+Click Sync AppDrops when online to fetch the latest apps from https://charlesmack.github.io/command/appdrops/index.html.
+Check the sync log for status updates (e.g., “Sync complete: 3 new AppDrops added”).
+New apps appear in the home grid, persisted in localStorage for offline use.
+
+
+Customize Theme:
+
+In the Settings panel, select a predefined color swatch or use the color picker to set a custom theme.
+Reset to the default color (#00ff7f) with the Reset to Default button.
+
+
+
+AppDrop Catalog
+The command center’s AppDrop catalog (/command/appdrops/index.html) lists all available AppDrops, including:
+
+Atlas (🌍): Geospatial visualization tool.
+Aurora (🌌): Creative design suite.
+Bryce Holograms (😇): 3D holographic production app.
+Camera Shop (🎥🏪): Camera equipment management.
+Charles5 Series (🎬/📽️/🎥/🎞️/📺): Professional video production tools.
+Dev Editor (💻): Code editor for developers.
+DJ Drop (🎧): Audio mixing and DJ tools.
+Encyclopedia (📚): Knowledge base and reference tool.
+First Aid QuickRef (🩺): Quick-reference medical guide.
+First Aid (🚑): Comprehensive first aid toolkit.
+FiveSeconds Cine/Lite (🎬/🎥): Short-form video editing.
+Hearsay/Cinema (🗣️/🎭): Audio and cinematic storytelling apps.
+Magifico Room/Stage (🏠/🎤): Virtual room and stage production tools.
+MPC Drop (🎮): Music production controller.
+OnePagerMiniOS (💻): Mini OS interface.
+Planner Gemini/Lite (📅/🗓️): Event and task planners.
+POPS (🌟): Core P.O.P.S. app.
+Retreat (🏕️): Wellness and productivity app.
+Scratchpad (📝): Quick note-taking tool.
+Strobe/HUD (✨/💡): Lighting control and HUD interfaces.
+Survivors Compass (🧭): Navigation and survival guide.
+Tap Talk (💬): Real-time communication tool.
+Media World (🗺🕹): 3D media player and world explorer.
+Viewria (👀): Visual media browser.
+
+New AppDrops can be added to the catalog by updating command/appdrops/index.html with new <a> tags.
+Contributing
+We welcome contributions to enhance P.O.P.S. and its AppDrop ecosystem! To contribute:
+
+Fork the Repository:
+git clone https://github.com/charlesmack/mobile.git
+cd mobile
+
+
+Create a Branch:
+git checkout -b feature/your-feature-name
+
+
+Make Changes:
+
+Add new AppDrops to command/appdrops/index.html with <a href="/path/to/appdrop/index.html">App Name</a>.
+Enhance the P.O.P.S. interface (index.html) with new features or optimizations.
+Ensure offline-first compatibility and localStorage persistence.
+
+
+Test Locally:
+
+Use a local server (e.g., npx serve) to test changes.
+Verify sync functionality by pointing to a local or staged command/appdrops/index.html.
+
+
+Submit a Pull Request:
+
+Push your branch:git push origin feature/your-feature-name
+
+
+Open a pull request on GitHub with a clear description of your changes.
+
+
+
+Development Notes
+
+Tech Stack: HTML, CSS, JavaScript (vanilla). No external frameworks for minimal footprint.
+Offline Support: Uses localStorage for app state and AppDrop caching.
+Sync Mechanism: Fetches AppDrops from command/appdrops/index.html when online, parsing <a> tags for app paths and names.
+Design: Glassmorphic UI with customizable accent colors (default: #00ff7f).
+Security: AppDrop iframes use sandbox attributes to restrict permissions.
+
+License
+This project is licensed under the MIT License. See the LICENSE file for details.
+Contact
+For questions or support, contact the maintainer at GitHub Issues or via the P.O.P.S. community on charlesmack.github.io.
