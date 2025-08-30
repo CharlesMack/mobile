@@ -18,17 +18,17 @@
       --glass-border: rgba(255, 255, 255, 0.2);
       --shadow-glow: 0 0 40px var(--accent-glow);
       --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 16px);
+      --safe-bottom: env(safe-area-inset-bottom, 20px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
-      --dock-h: clamp(96px, 20vw, 120px);
+      --dock-h: clamp(108px, 22vw, 132px);
       --status-h: clamp(24px, 6vw, 32px);
       --editbar-h: clamp(32px, 8vw, 40px);
       --tile-size: clamp(90px, 25vw, 120px);
       --gap-size: clamp(8px, 3vw, 16px);
     }
 
-    * {
+      * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
@@ -196,11 +196,11 @@
     }
 
     .home {
-      position: absolute;
-      inset: calc(var(--status-h) + var(--editbar-h) + var(--gap-size) * 2) var(--safe-right) calc(var(--dock-h) + var(--safe-bottom) + var(--gap-size)) var(--safe-left);
-      overflow: hidden;
-      z-index: 1;
-    }
+  position: absolute;
+  inset: calc(var(--status-h) + var(--editbar-h) + var(--gap-size) * 2) var(--safe-right) calc(var(--dock-h) + var(--safe-bottom) + var(--gap-size) * 2) var(--safe-left); /* Increased bottom margin */
+  overflow: hidden;
+  z-index: 1;
+}
 
     .search-container {
       display: flex;
@@ -389,36 +389,38 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: clamp(16px, 4vw, 20px) clamp(16px, 4vw, 24px); /* Increased padding */
+  padding: clamp(20px, 5vw, 24px) clamp(16px, 4vw, 24px); /* Increased vertical padding */
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.85), var(--accent-glow));
   backdrop-filter: blur(25px);
   border-top: 1px solid var(--accent-glow);
   z-index: 1000;
-  gap: clamp(16px, 4vw, 20px); /* Increased gap for better button spacing */
+  gap: clamp(16px, 4vw, 20px);
+  box-sizing: border-box; /* Ensure padding doesn't cause clipping */
+  overflow: visible; /* Prevent button clipping */
 }
 
-   .dock .d {
-  width: clamp(64px, 16vw, 76px); /* Increased size for larger touch targets */
-  height: clamp(64px, 16vw, 76px);
-  min-width: 56px; /* Ensure minimum touch target size */
+ .dock .d {
+  width: clamp(60px, 15vw, 72px); /* Slightly reduced size to prevent clipping */
+  height: clamp(60px, 15vw, 72px);
+  min-width: 56px; /* Maintain accessible touch target */
   min-height: 56px;
-  border-radius: clamp(20px, 5vw, 24px); /* Larger border radius */
+  border-radius: clamp(18px, 4.5vw, 22px); /* Adjusted border radius */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(28px, 7vw, 34px); /* Larger icons */
+  font-size: clamp(26px, 6.5vw, 32px); /* Slightly smaller icons to fit */
   cursor: pointer;
   background: linear-gradient(135deg, var(--accent-light), var(--accent-dark));
   box-shadow: 0 10px 25px var(--accent-glow);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   touch-action: manipulation;
+  position: relative; /* Ensure buttons stay within dock */
 }
 
-    .dock .d:hover, .dock .d:active, .dock .d:focus {
+ .dock .d:hover, .dock .d:active, .dock .d:focus {
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 15px 35px var(--accent-glow);
 }
-
     .dock-item {
       background: linear-gradient(135deg, rgba(26, 59, 26, 0.9), var(--accent-glow));
       color: #cbffd9;
