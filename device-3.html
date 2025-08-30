@@ -18,10 +18,10 @@
       --glass-border: rgba(255, 255, 255, 0.2);
       --shadow-glow: 0 0 40px var(--accent-glow);
       --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 10px);
+      --safe-bottom: env(safe-area-inset-bottom, 16px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
-      --dock-h: clamp(80px, 18vw, 100px);
+      --dock-h: clamp(96px, 20vw, 120px);
       --status-h: clamp(24px, 6vw, 32px);
       --editbar-h: clamp(32px, 8vw, 40px);
       --tile-size: clamp(90px, 25vw, 120px);
@@ -381,43 +381,43 @@
     }
 
     .dock {
-      position: absolute;
-      left: var(--safe-left);
-      right: var(--safe-right);
-      bottom: 0;
-      height: calc(var(--dock-h) + var(--safe-bottom));
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      padding: clamp(12px, 3vw, 16px) clamp(12px, 3vw, 20px) clamp(12px, 3vw, 16px) clamp(12px, 3vw, 20px);
-      background: linear-gradient(135deg, rgba(0, 0, 0, 0.85), var(--accent-glow));
-      backdrop-filter: blur(25px);
-      border-top: 1px solid var(--accent-glow);
-      z-index: 1000;
-      gap: clamp(12px, 3vw, 16px);
-    }
+  position: absolute;
+  left: var(--safe-left);
+  right: var(--safe-right);
+  bottom: 0;
+  height: calc(var(--dock-h) + var(--safe-bottom)); /* Include safe area inset */
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: clamp(16px, 4vw, 20px) clamp(16px, 4vw, 24px); /* Increased padding */
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.85), var(--accent-glow));
+  backdrop-filter: blur(25px);
+  border-top: 1px solid var(--accent-glow);
+  z-index: 1000;
+  gap: clamp(16px, 4vw, 20px); /* Increased gap for better button spacing */
+}
 
-    .dock .d {
-      width: clamp(56px, 14vw, 68px);
-      height: clamp(56px, 14vw, 68px);
-      min-width: 48px;
-      min-height: 48px;
-      border-radius: clamp(16px, 4vw, 20px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(24px, 6vw, 30px);
-      cursor: pointer;
-      background: linear-gradient(135deg, var(--accent-light), var(--accent-dark));
-      box-shadow: 0 10px 25px var(--accent-glow);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      touch-action: manipulation;
-    }
+   .dock .d {
+  width: clamp(64px, 16vw, 76px); /* Increased size for larger touch targets */
+  height: clamp(64px, 16vw, 76px);
+  min-width: 56px; /* Ensure minimum touch target size */
+  min-height: 56px;
+  border-radius: clamp(20px, 5vw, 24px); /* Larger border radius */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(28px, 7vw, 34px); /* Larger icons */
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--accent-light), var(--accent-dark));
+  box-shadow: 0 10px 25px var(--accent-glow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  touch-action: manipulation;
+}
 
     .dock .d:hover, .dock .d:active, .dock .d:focus {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 15px 35px var(--accent-glow);
-    }
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 35px var(--accent-glow);
+}
 
     .dock-item {
       background: linear-gradient(135deg, rgba(26, 59, 26, 0.9), var(--accent-glow));
